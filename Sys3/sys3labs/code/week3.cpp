@@ -29,7 +29,7 @@ int main(int argc, char * argv[])
     // configure CPU settings
     
        
-       if(1) // single issue
+       if(0) // single issue
        {
          Pipe.IssueWidth=1;
          Pipe.ReadPorts=2;
@@ -67,12 +67,12 @@ int main(int argc, char * argv[])
     
     // perform hazard fixes 
         //
-        //FixHazards();
+        FixHazards();
         //
     
     // output resulting pipeline diagram, and test for hazards
-        //Pipe.DumpPipeline();
-        //Pipe.PipelineTest();
+        Pipe.DumpPipeline();
+        Pipe.PipelineTest();
     
     // end of code     
 }
@@ -87,5 +87,32 @@ void FixHazards()
 
 void FixStructualHazards(int c)
 {
-	// your solution for column c
+  int ia = 0;
+  int rr = 0;
+  int wb = 0;
+
+  for(int i = 0; i < Pipe.OpCount; i++) {
+    if (Pipe.IsStageIALU(i, c)) {
+      ia++;
+      if (ia > Pipe.IALUCount) {
+        Pipe.InsertStall(i, c);
+        ia--;
+      }
+    }
+    if (Pipe.IsStageRR(i, c)) {
+      rr++;
+      if (rr > Pipe.ReadPorts) {
+        Pipe.InsertStall(i, c);
+        rr--;
+      }
+    }
+    if (Pipe.IsStageWB(i, c)) {
+      wb++;
+      if (wb > Pipe.WritePorts) {
+        Pipe.InsertStall(i, c);
+        wb--;
+      }
+    }
+    Pipe.CalculateCycles();
+  }
 }
