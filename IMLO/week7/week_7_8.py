@@ -18,13 +18,12 @@ def gradient_descent(f, df, x0, step_size_fn, max_iter):
     """
 
     # Exercise 1 (d): Todo: Implement here.
-    counter = 0
     fs = [f(x0)]
     xs = [x0]
-    while counter < max_iter:
-        counter += 1
-        x1 = x0 - step_size_fn(df(x0))
-        fs.append(x1)
+    for i in range(max_iter):
+        print(step_size_fn(i))
+        x1 = x0 - step_size_fn(i) * (df(x0))
+        fs.append(f(x1))
         xs.append(x1)
         x0 = x1
     return (x0, fs, xs)
@@ -107,21 +106,33 @@ if __name__ == '__main__':
         return float(6 * (3 * x + 4)) 
 
     # 1 (e): Todo: Plot the function:
-    fig_simple, ax_simple = plt.subplots()  # create an empty plot and retrieve the 'ax' handle
     # ...
+    x = np.linspace(-3, 3, 200)
+    y = []
+    for i in x:
+        y.append(f1(i))
+
+    plt.plot(x, y)
 
     # Todo: Set and plot the initial value:
-    x0 = None
+    x0 = 1
     # ...
 
     # Run gradient descent to find the minimum of the function:
     # Todo: Experiment with step size, max_iter
-    last_x, fs, xs = gradient_descent(f1, df1, x0, step_size_fn=lambda i: 0.0001, max_iter=10)
+    last_x, fs, xs = gradient_descent(f1, df1, x0, step_size_fn=lambda i: 0.01, max_iter=50)
+
+    plt.plot(xs, fs, label="gradient descent", marker="o")
+    plt.plot(last_x, fs[-1],label="final", marker="o")
+
+    plt.legend()
+    plt.grid(True)
     # Todo: Plot the found 'x' value and f(x)
     # ...
     # Todo: Plot each step of gradient descent, to see how it converges/diverges
     # ...
 
+    plt.show()
 
     # Exercise 2: Least Squares Regression
     # -----------
@@ -189,7 +200,7 @@ if __name__ == '__main__':
     def step_size_fn(i):
         return None  # Todo: Experiment with various step sizes
     # Now we're ready to run gradient descent to minimise f_ols:
-    last_x, fs, xs = gradient_descent(f_ols, df_ols, theta_init, step_size_fn=step_size_fn, max_iter=50)
+    # last_x, fs, xs = gradient_descent(f_ols, df_ols, theta_init, step_size_fn=step_size_fn, max_iter=50)
 
     # Todo: Plot the found hypothesis into the figure with the data.
     # Todo: Also plot individual steps of gradient descent, to see how the optimisation behaves.
